@@ -14,7 +14,7 @@ const Projects = () => {
       setIsAnimating(false)
     }, 300) // match transition time
   }
-s
+
   const projects = [
     {
       id: 1,
