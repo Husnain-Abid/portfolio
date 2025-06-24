@@ -48,7 +48,7 @@ const Contact = () => {
     // Simulate sending delay
     setTimeout(() => {
       setFormData({ name: "", email: "", message: "" });
-      setSuccessMessage("Thank you! Your message has been sent.");
+      setSuccessMessage("Thanks! I appreciate your interest and will respond soon");
       setIsSubmitting(false);
     }, 2000);
   };
