@@ -4,12 +4,12 @@ import "./App.css";
 
 function App() {
 
-  return ( 
+  return (
     <>
-    <Routes>
-    <Route path="/" Component={Home}/>
+      <Routes>
+        <Route path="/" Component={Home} />
 
-    </Routes>
+      </Routes>
     </>
   );
 }

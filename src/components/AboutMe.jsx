@@ -1,12 +1,70 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
+import gsap from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
 import about from "../assets/about.jpg"
+
+gsap.registerPlugin(ScrollTrigger)
 
 const AboutMe = () => {
   const [activeTab, setActiveTab] = useState("experience")
+  const sectionRef = useRef(null)
+  const tabContentRef = useRef(null)
 
-  // Data for the tabs
+  // Animate on scroll
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(".about-heading", {
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 80%",
+        },
+        y: 50,
+        opacity: 0,
+        duration: 1,
+        ease: "power3.out",
+      })
+
+      gsap.from(".about-bio", {
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 70%",
+        },
+        x: -50,
+        opacity: 0,
+        duration: 1,
+        delay: 0.3,
+        ease: "power3.out",
+      })
+
+      gsap.from(".about-tabs", {
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 75%",
+        },
+        x: 50,
+        opacity: 0,
+        duration: 1,
+        delay: 0.5,
+        ease: "power3.out",
+      })
+    }, sectionRef)
+
+    return () => ctx.revert()
+  }, [])
+
+  // Animate tab content on change
+  useEffect(() => {
+    if (tabContentRef.current) {
+      gsap.fromTo(
+        tabContentRef.current,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }
+      )
+    }
+  }, [activeTab])
+
   const tabsData = {
     experience: [
       {
@@ -31,22 +89,22 @@ const AboutMe = () => {
           "Built responsive websites using HTML, CSS, and JavaScript. Collaborated with designers to implement pixel-perfect UI designs.",
       },
     ],
-
     education: [
       {
         title: "Bachelor of Science in Computer Science",
         institution: "Khawaja Fareed University",
         period: "2019 - 2023",
-        description: "Specialized in web technologies and software engineering. Graduated with honors.",
+        description:
+          "Specialized in web technologies and software engineering. Graduated with honors.",
       },
       {
         title: "MERN Stack Bootcamp",
-        institution: "PASHA (Pakistan Software Houses Association)",
+        institution: "PASHA",
         period: "2022 - 2023",
-        description: "Gained hands-on experience in programming fundamentals, data structures, and full-stack web development using the MERN stack."
+        description:
+          "Gained hands-on experience in programming fundamentals, data structures, and full-stack web development using the MERN stack.",
       },
     ],
-    
     skills: [
       {
         category: "Frontend",
@@ -58,13 +116,11 @@ const AboutMe = () => {
       },
       {
         category: "Tools & Others",
-        items: ["Git", "Postman", "linux", "VS Code", "Figma"],
+        items: ["Git", "Postman", "Linux", "VS Code", "Figma"],
       },
     ],
-
   }
 
-  // Interests data
   const interests = [
     "Open Source Contribution",
     "Web Development",
@@ -73,11 +129,8 @@ const AboutMe = () => {
     "Mobile Development",
     "Photography",
     "Hiking",
-
-
   ]
 
-  // Render content based on active tab
   const renderTabContent = () => {
     switch (activeTab) {
       case "experience":
@@ -96,7 +149,6 @@ const AboutMe = () => {
             ))}
           </div>
         )
-
       case "education":
         return (
           <div className="space-y-8">
@@ -113,7 +165,6 @@ const AboutMe = () => {
             ))}
           </div>
         )
-
       case "skills":
         return (
           <div className="space-y-6">
@@ -131,32 +182,22 @@ const AboutMe = () => {
             ))}
           </div>
         )
-
       default:
         return null
     }
   }
 
   return (
-    <section id="about" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+    <section ref={sectionRef} id="about" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
       <div className="max-w-6xl mx-auto">
-        {/* Section Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-12 about-heading">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">About Me</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">Learn more about my background and interests</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
-          {/* Left Column - Bio and Interests */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Profile Image */}
-            <div className="flex justify-center lg:justify-center">
-              <div className=" rounded-md overflow-hidden">
-                <img src={about} alt="Profile" className="w-64 h-64 object-cover " />
-              </div>
-            </div>
-
-            {/* Biography */}
+          {/* Left Column */}
+          <div className="lg:col-span-2 space-y-8 about-bio">
             <div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Biography</h3>
               <p className="text-gray-700">
@@ -164,7 +205,6 @@ const AboutMe = () => {
               </p>
             </div>
 
-            {/* Interests */}
             <div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Interests</h3>
               <div className="flex flex-wrap gap-2">
@@ -175,41 +215,21 @@ const AboutMe = () => {
                 ))}
               </div>
             </div>
-
-            {/* Buttons */}
-            {/* <div className="flex flex-wrap gap-4">
-              <a
-                href="#contact"
-                className="px-6 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-800 transition-colors"
-              >
-                Contact Me
-              </a>
-              <a
-                href="/resume.pdf"
-                download
-                className="px-6 py-2 bg-white text-gray-900 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
-              >
-                Download CV
-              </a>
-            </div> */}
-
-
-
           </div>
 
-          {/* Right Column - Tabs */}
-          <div className="lg:col-span-3">
-            {/* Tab Navigation */}
+          {/* Right Column */}
+          <div className="lg:col-span-3 about-tabs">
             <div className="border-b border-gray-200 mb-8">
               <div className="flex space-x-8">
                 {Object.keys(tabsData).map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`pb-4 text-sm font-medium transition-colors ${activeTab === tab
-                      ? "text-blue-900 border-b-2 border-blue-900"
-                      : "text-gray-500 hover:text-gray-700"
-                      }`}
+                    className={`pb-4 text-sm font-medium transition-colors ${
+                      activeTab === tab
+                        ? "text-blue-900 border-b-2 border-blue-900"
+                        : "text-gray-500 hover:text-gray-700"
+                    }`}
                   >
                     {tab.charAt(0).toUpperCase() + tab.slice(1)}
                   </button>
@@ -217,10 +237,10 @@ const AboutMe = () => {
               </div>
             </div>
 
-            {/* Tab Content */}
-            <div className="min-h-[400px]">{renderTabContent()}</div>
+            <div ref={tabContentRef} className="min-h-[400px]">
+              {renderTabContent()}
+            </div>
           </div>
-
         </div>
       </div>
     </section>
@@ -228,4 +248,3 @@ const AboutMe = () => {
 }
 
 export default AboutMe
-

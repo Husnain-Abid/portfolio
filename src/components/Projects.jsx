@@ -1,18 +1,87 @@
+"use client"
+
 import { Code, Eye } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
+import gsap from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
+
+gsap.registerPlugin(ScrollTrigger)
 
 const Projects = () => {
   const [filter, setFilter] = useState("all")
   const [isAnimating, setIsAnimating] = useState(false)
+  const sectionRef = useRef(null)
+  const cardsRef = useRef([])
 
-  // Handle filter button click with animation
-  const handleFilterChange = (value) => {
+  // Animate heading and filter buttons on scroll
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(".projects-heading", {
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 80%",
+        },
+        opacity: 0,
+        y: 40,
+        duration: 1,
+        ease: "power3.out",
+      })
+
+      gsap.from(".projects-filters", {
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 75%",
+        },
+        opacity: 0,
+        y: 30,
+        duration: 1,
+        delay: 0.2,
+        ease: "power3.out",
+      })
+    }, sectionRef)
+
+    return () => ctx.revert()
+  }, [])
+
+  // Animate project cards on filter change
+useEffect(() => {
+  if (cardsRef.current.length) {
+    const trigger = ScrollTrigger.create({
+      trigger: sectionRef.current,
+      start: "top 75%", // trigger when section is in view
+      once: true,
+      onEnter: () => {
+        gsap.fromTo(
+          cardsRef.current,
+          { opacity: 0, y: 40 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            stagger: 0.1,
+            ease: "power3.out",
+          }
+        )
+      },
+    })
+
+    return () => {
+      trigger.kill()
+    }
+  }
+}, [])
+
+
+
+
+  
+const handleFilterChange = (value) => {
     if (filter === value) return
     setIsAnimating(true)
     setTimeout(() => {
       setFilter(value)
       setIsAnimating(false)
-    }, 300) // match transition time
+    }, 300)
   }
 
   const projects = [
@@ -78,7 +147,8 @@ const Projects = () => {
     },
   ]
 
-  const filteredProjects = filter === "all" ? projects : projects.filter((project) => project.category.includes(filter))
+  const filteredProjects =
+    filter === "all" ? projects : projects.filter((project) => project.category.includes(filter))
 
   const filterOptions = [
     { value: "all", label: "All Projects" },
@@ -88,9 +158,10 @@ const Projects = () => {
   ]
 
   return (
-    <section id="projects" className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+    <section id="projects" ref={sectionRef} className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-12">
+        {/* Section Heading */}
+        <div className="text-center mb-12 projects-heading">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">My Projects</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
             A showcase of my recent work, including web applications, APIs, and design projects.
@@ -98,15 +169,17 @@ const Projects = () => {
         </div>
 
         {/* Filter Buttons */}
-        <div className="flex justify-center mb-12">
+        <div className="flex justify-center mb-12 projects-filters">
           <div className="inline-flex rounded-md shadow-sm">
             {filterOptions.map((option) => (
               <button
                 key={option.value}
                 onClick={() => handleFilterChange(option.value)}
-                className={`px-4 py-2 text-sm font-medium ${filter === option.value ? "bg-blue-900 text-white" : "bg-white text-gray-700 hover:bg-gray-50"
-                  } ${option.value === "all" ? "rounded-l-md" : ""} ${option.value === "fullstack" ? "rounded-r-md" : ""
-                  } border border-gray-300`}
+                className={`px-4 py-2 text-sm font-medium ${filter === option.value
+                    ? "bg-blue-900 text-white"
+                    : "bg-white text-gray-700 hover:bg-gray-50"
+                  } ${option.value === "all" ? "rounded-l-md" : ""
+                  } ${option.value === "fullstack" ? "rounded-r-md" : ""} border border-gray-300`}
               >
                 {option.label}
               </button>
@@ -119,10 +192,11 @@ const Projects = () => {
           className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 transition-opacity duration-300 ${isAnimating ? "opacity-0" : "opacity-100"
             }`}
         >
-          {filteredProjects.map((project) => (
+          {filteredProjects.map((project, i) => (
             <div
+              ref={(el) => (cardsRef.current[i] = el)}
               key={project.id}
-              className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300"
+              className="bg-white rounded-lg overflow-hidden scale-100 shadow-md hover:shadow-2xl transition-shadow duration-300"
             >
               <div className="h-48 overflow-hidden">
                 <img
@@ -142,11 +216,19 @@ const Projects = () => {
                   ))}
                 </div>
                 <div className="flex justify-between">
-                  <a href={project.demoLink} target="_blank" className="inline-flex items-center text-sm text-gray-700 hover:text-blue-900">
+                  <a
+                    href={project.demoLink}
+                    target="_blank"
+                    className="inline-flex items-center text-sm text-gray-700 hover:text-blue-900"
+                  >
                     <Eye className="mr-2" />
                     Live Demo
                   </a>
-                  <a href={project.codeLink} target="_blank" className="inline-flex items-center text-sm text-gray-700 hover:text-blue-900">
+                  <a
+                    href={project.codeLink}
+                    target="_blank"
+                    className="inline-flex items-center text-sm text-gray-700 hover:text-blue-900"
+                  >
                     <Code className="mr-1" />
                     Code
                   </a>
