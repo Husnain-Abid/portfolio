@@ -201,7 +201,11 @@ const AboutMe = () => {
             <div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Biography</h3>
               <p className="text-gray-700">
-                I am a passionate Full Stack Developer with 2 years of experience building scalable and user-friendly web applications. Proficient in the MERN stack, I specialize in writing clean, efficient code and solving complex problems with elegant solutions. Dedicated to continuous learning, I thrive on creating seamless digital experiences.
+                {/* I am a passionate Full Stack Developer with 2 years of experience building scalable and user-friendly web applications. Proficient in the MERN stack, I specialize in writing clean, efficient code and solving complex problems with elegant solutions. Dedicated to continuous learning, I thrive on creating seamless digital experiences. */}
+              
+              I am a passionate Full Stack Developer focused on building scalable, user-friendly web applications. Proficient in the MERN stack, I enjoy turning complex problems into simple, efficient solutions. I specialize in clean, maintainable code and intuitive user experiences. Always eager to learn and grow, I’m driven by a love for technology and a commitment to continuous improvement.
+              
+              
               </p>
             </div>
 

@@ -32,7 +32,7 @@ const Navbar = () => {
   }, [])
 
   return (
-    <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? "bg-white shadow-md py-2" : "bg-white py-4"}`}>
+    <nav className={`md:fixed  w-full z-50 transition-all duration-300 ${isScrolled ? "bg-white shadow-md py-2" : "bg-white py-4"}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
           {/* Logo */}
@@ -89,29 +89,37 @@ const Navbar = () => {
       </div>
 
       {/* Mobile Menu */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden bg-white shadow-lg px-4 py-3 space-y-2">
+           {isMobileMenuOpen && (
+        <div className="md:hidden container mx-auto  px-4 py-3 space-y-2 transition-all duration-300">
+          <div className="flex justify-between items-center">
+
+          </div>
           {sectionIds
-            .filter(id => id !== "hero") // don't show Hero in navbar
-            .map(id => (
+            .filter((id) => id !== "hero") // don't show Hero in navbar
+            .map((id) => (
               <a
                 key={id}
                 href={`#${id}`}
-                className={`text-sm font-medium ${activeLink === id
-                  ? "text-blue-600 border-b-2 border-blue-600 pb-1"
-                  : "text-gray-600 hover:text-gray-900"
-                  }`}
-                onClick={() => setActiveLink(id)}
+                onClick={() => {
+                  setActiveLink(id);
+                  setIsMobileMenuOpen(false);
+                }}
+                className={`block text-sm font-medium px-4 py-2 ${
+                  activeLink === id
+                    ? "text-blue-600 border-b-2 border-blue-600 pb-1"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
               >
                 {id.charAt(0).toUpperCase() + id.slice(1)}
               </a>
             ))}
-          <a href="/Husnain’s_Resume.pdf" download
-            className="block px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-md"
+          <a
+            href="/Husnain’s_Resume.pdf"
+            download
+            className="block px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-md"
           >
             Resume
           </a>
-
         </div>
       )}
     </nav>
